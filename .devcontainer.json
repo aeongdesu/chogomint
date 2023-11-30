@@ -1,0 +1,18 @@
+{
+	"image": "mcr.microsoft.com/devcontainers/go:1-1.21-bullseye",
+	"features": {
+		"ghcr.io/robbert229/devcontainer-features/ko:1": {}
+	},
+	"postCreateCommand": "go version",
+	"customizations": {
+		"vscode": {
+			"settings": {
+				"files.autoSave": "afterDelay",
+				"editor.bracketPairColorization.enabled": false
+			},
+			"extensions": [
+				"golang.go"
+			]
+		}
+	}
+}
