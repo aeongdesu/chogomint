@@ -2,23 +2,22 @@ package utils
 
 import (
 	"fmt"
+	"github.com/alitto/pond"
 	"io"
 	"net/http"
 	"os"
-	"sync"
 )
 
 func DownloadMaps(collectionData Collection, mirror string) {
-	var wg sync.WaitGroup
+	pool := pond.New(8, 0, pond.MinWorkers(8))
 
 	if err := os.Mkdir(fmt.Sprint(collectionData.Id), 0755); err != nil {
 		panic(err)
 	}
 
 	for _, beatmap := range collectionData.Beatmapsets {
-		wg.Add(1)
-		go func(beatmap Beatmaps) {
-			defer wg.Done()
+		beatmap := beatmap
+		pool.Submit(func() {
 			fmt.Println("Downloading beatmapset:", beatmap.Id)
 			url := fmt.Sprintf("%s%d", mirror, beatmap.Id)
 
@@ -38,7 +37,8 @@ func DownloadMaps(collectionData Collection, mirror string) {
 				panic(err)
 			}
 			fmt.Println("Downloaded beatmapset:", beatmap.Id)
-		}(beatmap)
+		})
 	}
-	wg.Wait()
+	pool.StopAndWait()
+	fmt.Println("Finished downloading collection:", collectionData.Name)
 }
