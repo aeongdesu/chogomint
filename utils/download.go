@@ -11,7 +11,7 @@ import (
 func DownloadMaps(collectionData Collection, mirror string) {
 	var wg sync.WaitGroup
 
-	if err := os.Mkdir(fmt.Sprint(collectionData.Name), 0755); err != nil {
+	if err := os.Mkdir(fmt.Sprint(collectionData.Id), 0755); err != nil {
 		panic(err)
 	}
 
@@ -28,7 +28,7 @@ func DownloadMaps(collectionData Collection, mirror string) {
 			}
 			defer res.Body.Close()
 
-			file, err := os.Create(fmt.Sprintf("%s/%d.osz", collectionData.Name, beatmap.Id))
+			file, err := os.Create(fmt.Sprintf("%d/%d.osz", collectionData.Id, beatmap.Id))
 			if err != nil {
 				panic(err)
 			}
@@ -39,6 +39,6 @@ func DownloadMaps(collectionData Collection, mirror string) {
 			}
 			fmt.Println("Downloaded beatmapset:", beatmap.Id)
 		}(beatmap)
-		wg.Wait()
 	}
+	wg.Wait()
 }
